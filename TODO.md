@@ -1,81 +1,94 @@
-# TODO.md - Gerenciamento de Pedidos para E-commerce
+## **Estrutura do Projeto**
 
-## Fase 1: Estrutura do Banco de Dados, Modelagem e CRUD Básico
+### **1. Setup do Ambiente**
+- [ ] Configurar ambiente de desenvolvimento com Go.
+- [ ] Configurar PostgreSQL para o banco de dados.
+- [ ] Configurar Redis para cache.
+- [ ] Configurar ferramentas de testes unitários e integração.
+- [ ] Criar o projeto com a estrutura de diretórios para API REST.
 
-### Tarefa 1: Modelagem do Banco de Dados
-- **Descrição**: Criar o esquema básico do banco de dados com as tabelas `Clientes`, `Produtos`, `Pedidos`, `Itens_Pedido` e `Estoque`.
-  - Definir os campos e tipos para cada tabela.
-  - Garantir relacionamentos entre as tabelas: `Clientes` para `Pedidos`, `Pedidos` para `Itens_Pedido`, `Produtos` para `Itens_Pedido`.
-  - Normalizar o banco de dados (1NF, 2NF, 3NF).
-- **Prazo**: 3 dias.
+### **2. Banco de Dados (PostgreSQL)**
+
+- **Modelagem das Tabelas**:
+  - [ ] Criar a tabela `clientes` com campos: `id`, `nome`, `email`, `endereco`.
+  - [ ] Criar a tabela `produtos` com campos: `id`, `nome`, `descricao`, `preco`.
+  - [ ] Criar a tabela `pedidos` com campos: `id`, `cliente_id`, `data_pedido`, `status`.
+  - [ ] Criar a tabela `itens_pedido` com campos: `id`, `pedido_id`, `produto_id`, `quantidade`.
+  - [ ] Criar a tabela `estoque` com campos: `id`, `produto_id`, `quantidade_disponivel`.
   
-### Tarefa 2: Implementar o CRUD para Produtos e Clientes
-- **Descrição**: Criar as funcionalidades para cadastro, leitura, atualização e exclusão (CRUD) de `Produtos` e `Clientes` no sistema.
-  - Criar APIs RESTful para manipulação de dados.
-  - Validar entradas com regras simples (ex: nome do produto, e-mail do cliente).
-- **Prazo**: 3 dias.
+- **Normalização**:
+  - [ ] Garantir que as tabelas estejam normalizadas para evitar redundâncias.
+  
+- **Migrations**:
+  - [ ] Configurar migrations para versionar o esquema do banco de dados.
+  - [ ] Criar migrations para adicionar e modificar tabelas e colunas.
 
-### Tarefa 3: Implementar o CRUD para Pedidos e Itens de Pedido
-- **Descrição**: Criar as funcionalidades para criação de pedidos e seus itens. O pedido pode incluir múltiplos produtos.
-  - Criar endpoints para adicionar itens a um pedido.
-  - Validar a quantidade disponível em estoque para cada item.
-- **Prazo**: 4 dias.
+- **Índices de Banco de Dados**:
+  - [ ] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
 
-## Fase 2: Transações, Normalização e Resolução de Problemas de Performance
+- **Transações (ACID)**:
+  - [ ] Implementar transações para garantir que as operações de criação de pedidos sejam atômicas (incluir itens do pedido e atualizar estoque).
 
-### Tarefa 4: Implementar Transações (ACID) em Pedidos
-- **Descrição**: Implementar transações para garantir que a criação de um pedido e seus itens sejam atômicas. 
-  - Usar transações para garantir que se um item falhar, o pedido inteiro seja revertido.
-  - Testar a integridade dos dados ao falhar em algum ponto da transação.
-- **Prazo**: 3 dias.
+- **Performance de Consultas**:
+  - [ ] Realizar profiling das consultas e otimizar com índices ou ajustes.
+  
+### **3. API REST (Golang)**
 
-### Tarefa 5: Resolver Problema N+1 no Carregamento de Pedidos e Itens
-- **Descrição**: Otimizar o carregamento de pedidos e seus itens para evitar o problema N+1.
-  - Implementar **eager loading** ou **joins** para buscar os pedidos com seus itens em uma única consulta.
-  - Validar que o número de consultas SQL foi reduzido.
-- **Prazo**: 4 dias.
+- **Estrutura de Endpoints**:
+  - [ ] Criar endpoint `POST /clientes` para cadastro de novos clientes.
+  - [ ] Criar endpoint `GET /clientes/{id}` para visualizar detalhes de um cliente.
+  - [ ] Criar endpoint `POST /produtos` para adicionar novos produtos.
+  - [ ] Criar endpoint `GET /produtos/{id}` para visualizar detalhes de um produto.
+  - [ ] Criar endpoint `POST /pedidos` para criar um pedido.
+  - [ ] Criar endpoint `GET /pedidos/{id}` para visualizar detalhes de um pedido.
+  - [ ] Criar endpoint `PUT /pedidos/{id}` para atualizar o status do pedido.
+  - [ ] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
 
-### Tarefa 6: Normalização do Banco de Dados
-- **Descrição**: Garantir que o banco de dados esteja corretamente normalizado.
-  - Verificar redundâncias e aplicar a normalização (1NF, 2NF, 3NF).
-  - Criar novas tabelas se necessário para remover dados duplicados.
-- **Prazo**: 3 dias.
+- **JWT para Autenticação**:
+  - [ ] Implementar autenticação com JWT nas rotas protegidas.
+  - [ ] Adicionar middleware para verificar o token em rotas privadas.
 
-## Fase 3: Migrations, Indexação e Profiling
+### **4. Redis para Caching**
 
-### Tarefa 7: Criar Migrations e Gerenciar Alterações no Banco de Dados
-- **Descrição**: Criar migrations para versionar o banco de dados e gerenciar alterações futuras.
-  - Criar uma migration inicial para definir as tabelas.
-  - Adicionar novas migrations conforme a evolução do sistema (ex: nova tabela ou coluna).
-- **Prazo**: 3 dias.
+- **Implementação de Cache**:
+  - [ ] Implementar caching para produtos mais vendidos.
+  - [ ] Implementar cache para detalhes de pedidos e clientes para melhorar a performance.
 
-### Tarefa 8: Implementar Índices para Otimização de Consultas
-- **Descrição**: Adicionar índices nas colunas mais utilizadas nas consultas (ex: `cliente_id`, `produto_id`, `pedido_id`).
-  - Analisar as consultas mais frequentes e criar índices para melhorar a performance.
-  - Validar se as consultas estão mais rápidas após a adição dos índices.
-- **Prazo**: 4 dias.
+- **Configuração do Redis**:
+  - [ ] Configurar o Redis no projeto e integrá-lo com a aplicação.
 
-### Tarefa 9: Profiling de Performance e Análise de Consultas Lentas
-- **Descrição**: Realizar profiling das consultas SQL para encontrar e otimizar consultas lentas.
-  - Usar ferramentas de profiling como EXPLAIN ou pg_stat_statements.
-  - Analisar o tempo de execução e ajustar as consultas para melhorar a performance.
-- **Prazo**: 3 dias.
+### **5. Testes (Unitários e de Integração)**
 
-## Fase 4: Testes e Ajustes Finais
+- **Testes Unitários**:
+  - [ ] Escrever testes unitários para funções de lógica de negócio.
+  - [ ] Escrever testes para a validação de dados (ex: validação de entrada de pedidos, dados de clientes).
 
-### Tarefa 10: Criar Testes de Unidade para CRUD e Lógica de Pedidos
-- **Descrição**: Escrever testes de unidade para as funcionalidades de CRUD e lógica de criação de pedidos.
-  - Garantir que todas as operações estão funcionando como esperado.
-  - Criar testes para transações e para verificar a integridade dos dados.
-- **Prazo**: 4 dias.
+- **Testes de Integração**:
+  - [ ] Escrever testes de integração para os endpoints da API REST (testar criação de pedidos, relacionamento entre produtos e pedidos).
+  
+- **Testes de Banco de Dados**:
+  - [ ] Escrever testes para garantir que as migrations e transações de banco de dados estão funcionando corretamente.
+  
+- **Cobertura de Testes**:
+  - [ ] Garantir cobertura de testes de 80% ou mais.
 
-### Tarefa 11: Testar Integração com Banco de Dados (Testes de Performance)
-- **Descrição**: Testar a performance do sistema integrando as consultas com o banco de dados real.
-  - Validar se o tempo de resposta das consultas está dentro de um padrão aceitável.
-  - Realizar testes de carga para verificar como o sistema se comporta com grandes volumes de dados.
-- **Prazo**: 4 dias.
+### **6. CI/CD (GitHub Actions)**
 
-### Tarefa 12: Revisão de Código e Ajustes Finais
-- **Descrição**: Revisar o código, corrigir bugs e melhorar a legibilidade.
-  - Refatorar o código se necessário para garantir aderência aos princípios de SOLID e boas práticas.
-- **Prazo**: 2 dias.
+- **Configuração de CI/CD**:
+  - [ ] Criar pipeline de CI/CD usando GitHub Actions.
+  - [ ] Configurar o pipeline para rodar testes unitários e de integração a cada commit.
+  - [ ] Configurar o pipeline para realizar o deploy automático da aplicação (inicialmente em um ambiente de testes, depois produção).
+
+### **7. Performance e Otimização**
+
+- **Profiling de Performance**:
+  - [ ] Usar ferramentas como `pprof` para análise de performance da aplicação.
+  - [ ] Monitorar e otimizar endpoints de maior carga.
+
+- **Cache e Indices**:
+  - [ ] Testar e otimizar as estratégias de cache no Redis.
+  - [ ] Analisar e melhorar as consultas SQL usando `EXPLAIN`.
+ 
+- **README**:
+  - [ ] Escrever o README do projeto com detalhes sobre a configuração, execução e funcionamento do sistema.
+  
