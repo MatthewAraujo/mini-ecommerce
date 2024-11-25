@@ -1,0 +1,6 @@
+version: "2"
+sql:
+  - engine: "postgresql" 
+    schema: "./cmd/migrate/migrations"
+    queries: "query.sql:wq
+    "

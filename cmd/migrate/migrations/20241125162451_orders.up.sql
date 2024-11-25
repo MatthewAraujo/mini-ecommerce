@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE
+);

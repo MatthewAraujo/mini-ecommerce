@@ -10,18 +10,18 @@
 ### **2. Banco de Dados (PostgreSQL)**
 
 - **Modelagem das Tabelas**:
-  - [ ] Criar a tabela `clientes` com campos: `id`, `nome`, `email`, `endereco`.
-  - [ ] Criar a tabela `produtos` com campos: `id`, `nome`, `descricao`, `preco`.
-  - [ ] Criar a tabela `pedidos` com campos: `id`, `cliente_id`, `data_pedido`, `status`.
-  - [ ] Criar a tabela `itens_pedido` com campos: `id`, `pedido_id`, `produto_id`, `quantidade`.
-  - [ ] Criar a tabela `estoque` com campos: `id`, `produto_id`, `quantidade_disponivel`.
+  - [X] Criar a tabela `clientes` com campos: `id`, `nome`, `email`, `endereco`.
+  - [X] Criar a tabela `produtos` com campos: `id`, `nome`, `descricao`, `preco`.
+  - [X] Criar a tabela `pedidos` com campos: `id`, `cliente_id`, `data_pedido`, `status`.
+  - [X] Criar a tabela `itens_pedido` com campos: `id`, `pedido_id`, `produto_id`, `quantidade`.
+  - [X] Criar a tabela `estoque` com campos: `id`, `produto_id`, `quantidade_disponivel`.
   
 - **Normalização**:
   - [ ] Garantir que as tabelas estejam normalizadas para evitar redundâncias.
   
 - **Migrations**:
-  - [ ] Configurar migrations para versionar o esquema do banco de dados.
-  - [ ] Criar migrations para adicionar e modificar tabelas e colunas.
+  - [X] Configurar migrations para versionar o esquema do banco de dados.
+  - [X] Criar migrations para adicionar e modificar tabelas e colunas.
 
 - **Índices de Banco de Dados**:
   - [ ] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
