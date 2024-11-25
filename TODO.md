@@ -1,9 +1,9 @@
 ## **Estrutura do Projeto**
 
 ### **1. Setup do Ambiente**
-- [ ] Configurar ambiente de desenvolvimento com Go.
-- [ ] Configurar PostgreSQL para o banco de dados.
-- [ ] Configurar Redis para cache.
+- [X] Configurar ambiente de desenvolvimento com Go.
+- [X] Configurar PostgreSQL para o banco de dados.
+- [X] Configurar Redis para cache.
 - [ ] Configurar ferramentas de testes unitários e integração.
 - [ ] Criar o projeto com a estrutura de diretórios para API REST.
 
