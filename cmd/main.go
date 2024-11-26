@@ -11,6 +11,7 @@ import (
 	configs "github.com/MatthewAraujo/min-ecommerce/config"
 	database "github.com/MatthewAraujo/min-ecommerce/db"
 	"github.com/MatthewAraujo/min-ecommerce/pkg/assert"
+	"github.com/MatthewAraujo/min-ecommerce/service/repository"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -36,7 +37,9 @@ func main() {
 	assert.NoError(err, "Redis is offline")
 	log.Printf("Connect to redis")
 
-	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.API.Port), db, redis)
+	repo := repository.New(db)
+
+	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.API.Port), repo, redis)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

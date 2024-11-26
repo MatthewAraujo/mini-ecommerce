@@ -1,11 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	configs "github.com/MatthewAraujo/min-ecommerce/config"
-	"github.com/MatthewAraujo/min-ecommerce/db"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file" // Importa suporte para leitura de arquivos de migração
@@ -14,9 +14,9 @@ import (
 
 func main() {
 	url := configs.Envs.Postgres.URL
-	db, err := db.NewMyPostgresSQLStorage(url)
+	db, err := sql.Open("pgx", url)
 	if err != nil {
-		log.Fatal("Failed to Connecto to posgreSQL")
+		log.Fatalf("Failed to connect to PostgreSQL: %v", err)
 	}
 	// Configurando o driver de migração para PostgreSQL
 	driver, err := pgx.WithInstance(db, &pgx.Config{})

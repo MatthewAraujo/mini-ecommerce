@@ -1,2 +1,2 @@
--- name: FinAllClients
-select * from clients;
+-- name: FinAllCustomers :many
+select * from customers;

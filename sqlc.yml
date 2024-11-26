@@ -2,5 +2,8 @@ version: "2"
 sql:
   - engine: "postgresql" 
     schema: "./cmd/migrate/migrations"
-    queries: "query.sql:wq
-    "
+    queries: "query.sql"
+    gen:
+      go:
+        package: "repository" 
+        out: "service/repository"
