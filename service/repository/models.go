@@ -9,35 +9,34 @@ import (
 )
 
 type Customer struct {
-	ID      int32
-	Name    string
-	Email   string
-	Address sql.NullString
+	ID      int32          `json:"id"`
+	Name    string         `json:"name"`
+	Email   string         `json:"email"`
 }
 
 type Order struct {
-	ID         int32
-	CustomerID int32
-	OrderDate  sql.NullTime
-	Status     string
+	ID         int32         `json:"id"`
+	CustomerID int32         `json:"customer_id"`
+	OrderDate  sql.NullTime  `json:"order_date"`
+	Status     string        `json:"status"`
 }
 
 type OrderItem struct {
-	ID        int32
-	OrderID   int32
-	ProductID int32
-	Quantity  int32
+	ID        int32 `json:"id"`
+	OrderID   int32 `json:"order_id"`
+	ProductID int32 `json:"product_id"`
+	Quantity  int32 `json:"quantity"`
 }
 
 type Product struct {
-	ID          int32
-	Name        string
-	Description sql.NullString
-	Price       string
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	Description sql.NullString `json:"description"`
+	Price       string         `json:"price"`
 }
 
 type Stock struct {
-	ID                int32
-	ProductID         int32
-	AvailableQuantity int32
+	ID                int32 `json:"id"`
+	ProductID         int32 `json:"product_id"`
+	AvailableQuantity int32 `json:"available_quantity"`
 }

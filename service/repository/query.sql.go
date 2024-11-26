@@ -10,7 +10,7 @@ import (
 )
 
 const finAllCustomers = `-- name: FinAllCustomers :many
-select id, name, email, address from customers
+select id, name, email from customers
 `
 
 func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
@@ -22,12 +22,7 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 	var items []Customer
 	for rows.Next() {
 		var i Customer
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Email,
-			&i.Address,
-		); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.Email); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
