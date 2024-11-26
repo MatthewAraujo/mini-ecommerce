@@ -35,6 +35,7 @@ type Product struct {
 	Price       string         `json:"price"`
 }
 
+
 type Stock struct {
 	ID                int32 `json:"id"`
 	ProductID         int32 `json:"product_id"`
