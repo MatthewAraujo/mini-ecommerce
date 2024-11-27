@@ -37,9 +37,9 @@ func main() {
 	assert.NoError(err, "Redis is offline")
 	log.Printf("Connect to redis")
 
-	repo := repository.New(db)
+	repository := repository.New(db)
 
-	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.API.Port), repo, redis)
+	server := api.NewAPIServer(fmt.Sprintf(":%s", configs.Envs.API.Port), repository, db, redis)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

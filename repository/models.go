@@ -9,16 +9,16 @@ import (
 )
 
 type Customer struct {
-	ID      int32          `json:"id"`
-	Name    string         `json:"name"`
-	Email   string         `json:"email"`
+	ID    int32  `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 
 type Order struct {
-	ID         int32         `json:"id"`
-	CustomerID int32         `json:"customer_id"`
-	OrderDate  sql.NullTime  `json:"order_date"`
-	Status     string        `json:"status"`
+	ID         int32        `json:"id"`
+	CustomerID int32        `json:"customer_id"`
+	OrderDate  sql.NullTime `json:"order_date"`
+	Status     string       `json:"status"`
 }
 
 type OrderItem struct {
@@ -34,7 +34,6 @@ type Product struct {
 	Description sql.NullString `json:"description"`
 	Price       string         `json:"price"`
 }
-
 
 type Stock struct {
 	ID                int32 `json:"id"`

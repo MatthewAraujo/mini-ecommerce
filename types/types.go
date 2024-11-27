@@ -1,7 +1,12 @@
 package types
 
-import "github.com/MatthewAraujo/min-ecommerce/service/repository"
+import (
+	"context"
 
-type CostumersStore interface {
-	GetAllCustomers() ([]repository.Customer, error)
+	"github.com/MatthewAraujo/min-ecommerce/repository"
+)
+
+type CostumersService interface {
+	GetAllCustomers() ([]repository.Customer, int, error)
+	Order(context.Context, int32, []repository.OrderItem) (int, error)
 }
