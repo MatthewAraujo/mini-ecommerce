@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/MatthewAraujo/min-ecommerce/repository"
 	"github.com/MatthewAraujo/min-ecommerce/service/customers"
-	"github.com/MatthewAraujo/min-ecommerce/service/repository"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
 )

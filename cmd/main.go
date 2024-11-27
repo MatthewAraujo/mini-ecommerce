@@ -11,7 +11,7 @@ import (
 	configs "github.com/MatthewAraujo/min-ecommerce/config"
 	database "github.com/MatthewAraujo/min-ecommerce/db"
 	"github.com/MatthewAraujo/min-ecommerce/pkg/assert"
-	"github.com/MatthewAraujo/min-ecommerce/service/repository"
+	"github.com/MatthewAraujo/min-ecommerce/repository"
 	"github.com/redis/go-redis/v9"
 )
 
