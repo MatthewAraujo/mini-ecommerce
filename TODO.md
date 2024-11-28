@@ -24,7 +24,7 @@
   - [X] Criar migrations para adicionar e modificar tabelas e colunas.
 
 - **Índices de Banco de Dados**:
-  - [ ] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
+  - [X] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
 
 - **Transações (ACID)**:
   - [X] Implementar transações para garantir que as operações de criação de pedidos sejam atômicas (incluir itens do pedido e atualizar estoque).
