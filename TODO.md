@@ -17,7 +17,7 @@
   - [X] Criar a tabela `estoque` com campos: `id`, `produto_id`, `quantidade_disponivel`.
   
 - **Normalização**:
-  - [ ] Garantir que as tabelas estejam normalizadas para evitar redundâncias.
+  - [X] Garantir que as tabelas estejam normalizadas para evitar redundâncias.
   
 - **Migrations**:
   - [X] Configurar migrations para versionar o esquema do banco de dados.
@@ -27,7 +27,7 @@
   - [ ] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
 
 - **Transações (ACID)**:
-  - [ ] Implementar transações para garantir que as operações de criação de pedidos sejam atômicas (incluir itens do pedido e atualizar estoque).
+  - [X] Implementar transações para garantir que as operações de criação de pedidos sejam atômicas (incluir itens do pedido e atualizar estoque).
 
 - **Performance de Consultas**:
   - [ ] Realizar profiling das consultas e otimizar com índices ou ajustes.
