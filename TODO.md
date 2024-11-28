@@ -29,8 +29,6 @@
 - **Transações (ACID)**:
   - [X] Implementar transações para garantir que as operações de criação de orders sejam atômicas (incluir itens do order e atualizar stock).
 
-- **Performance de Consultas**:
-  - [ ] Realizar profiling das consultas e btimizar com índices ou ajustes.
   
 ### **3. API REST (Golang)**
 
