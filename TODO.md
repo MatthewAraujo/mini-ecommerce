@@ -10,11 +10,11 @@
 ### **2. Banco de Dados (PostgreSQL)**
 
 - **Modelagem das Tabelas**:
-  - [X] Criar a tabela `clientes` com campos: `id`, `nome`, `email`, `endereco`.
-  - [X] Criar a tabela `produtos` com campos: `id`, `nome`, `descricao`, `preco`.
-  - [X] Criar a tabela `pedidos` com campos: `id`, `cliente_id`, `data_pedido`, `status`.
-  - [X] Criar a tabela `itens_pedido` com campos: `id`, `pedido_id`, `produto_id`, `quantidade`.
-  - [X] Criar a tabela `estoque` com campos: `id`, `produto_id`, `quantidade_disponivel`.
+  - [X] Criar a tabela `customers` com campos: `id`, `nome`, `email`  
+  - [X] Criar a tabela `products` com campos: `id`, `nome`, `descricao`, `preco`.
+  - [X] Criar a tabela `orders` com campos: `id`, `customer_id`, `data_order`, `status`.
+  - [X] Criar a tabela `itens_order` com campos: `id`, `order_id`, `product_id`, `quantidade`.
+  - [X] Criar a tabela `stock` com campos: `id`, `product_id`, `quantidade_disponivel`.
   
 - **Normalização**:
   - [X] Garantir que as tabelas estejam normalizadas para evitar redundâncias.
@@ -24,24 +24,24 @@
   - [X] Criar migrations para adicionar e modificar tabelas e colunas.
 
 - **Índices de Banco de Dados**:
-  - [X] Criar índices nas colunas mais consultadas, como `cliente_id`, `produto_id` e `pedido_id`.
+  - [X] Criar índices nas colunas mais consultadas, como `customer_id`, `product_id` e `order_id`.
 
 - **Transações (ACID)**:
-  - [X] Implementar transações para garantir que as operações de criação de pedidos sejam atômicas (incluir itens do pedido e atualizar estoque).
+  - [X] Implementar transações para garantir que as operações de criação de orders sejam atômicas (incluir itens do order e atualizar stock).
 
 - **Performance de Consultas**:
-  - [ ] Realizar profiling das consultas e otimizar com índices ou ajustes.
+  - [ ] Realizar profiling das consultas e btimizar com índices ou ajustes.
   
 ### **3. API REST (Golang)**
 
 - **Estrutura de Endpoints**:
-  - [ ] Criar endpoint `POST /clientes` para cadastro de novos clientes.
-  - [ ] Criar endpoint `GET /clientes/{id}` para visualizar detalhes de um cliente.
-  - [ ] Criar endpoint `POST /produtos` para adicionar novos produtos.
-  - [ ] Criar endpoint `GET /produtos/{id}` para visualizar detalhes de um produto.
-  - [ ] Criar endpoint `POST /pedidos` para criar um pedido.
-  - [ ] Criar endpoint `GET /pedidos/{id}` para visualizar detalhes de um pedido.
-  - [ ] Criar endpoint `PUT /pedidos/{id}` para atualizar o status do pedido.
+  - [ ] Criar endpoint `POST /customers` para cadastro de novos customers.
+  - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
+  - [ ] Criar endpoint `POST /products` para adicionar novos products.
+  - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.
+  - [ ] Criar endpoint `POST /orders` para criar um order.
+  - [ ] Criar endpoint `GET /orders/{id}` para visualizar detalhes de um order.
+  - [ ] Criar endpoint `PUT /orders/{id}` para atualizar o status do order.
   - [ ] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
 
 - **JWT para Autenticação**:
@@ -51,8 +51,8 @@
 ### **4. Redis para Caching**
 
 - **Implementação de Cache**:
-  - [ ] Implementar caching para produtos mais vendidos.
-  - [ ] Implementar cache para detalhes de pedidos e clientes para melhorar a performance.
+  - [ ] Implementar caching para products mais vendidos.
+  - [ ] Implementar cache para detalhes de orders e customers para melhorar a performance.
 
 - **Configuração do Redis**:
   - [ ] Configurar o Redis no projeto e integrá-lo com a aplicação.
@@ -61,10 +61,10 @@
 
 - **Testes Unitários**:
   - [ ] Escrever testes unitários para funções de lógica de negócio.
-  - [ ] Escrever testes para a validação de dados (ex: validação de entrada de pedidos, dados de clientes).
+  - [ ] Escrever testes para a validação de dados (ex: validação de entrada de orders, dados de customers).
 
 - **Testes de Integração**:
-  - [ ] Escrever testes de integração para os endpoints da API REST (testar criação de pedidos, relacionamento entre produtos e pedidos).
+  - [ ] Escrever testes de integração para os endpoints da API REST (testar criação de orders, relacionamento entre products e orders).
   
 - **Testes de Banco de Dados**:
   - [ ] Escrever testes para garantir que as migrations e transações de banco de dados estão funcionando corretamente.
