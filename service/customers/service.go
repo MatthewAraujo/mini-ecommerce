@@ -8,6 +8,9 @@ import (
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
+	"github.com/MatthewAraujo/min-ecommerce/types"
+	"github.com/MatthewAraujo/min-ecommerce/utils"
+	"github.com/go-playground/validator"
 )
 
 type Service struct {
@@ -35,29 +38,24 @@ func (s *Service) BeginTransaction(ctx context.Context) (*repository.Queries, *s
 	return s.db.WithTx(tx), tx, nil
 }
 
-func (s *Service) GetAllCustomers() ([]repository.Customer, int, error) {
-	customers, err := s.db.FinAllCustomers(context.Background())
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
+func (s *Service) CreateCustomer(customer *types.CreateCustomerPayload) (repository.Customer, int, error) {
+	if err := utils.Validate.Struct(customer); err != nil {
+		errors := err.(validator.ValidationErrors)
+		return repository.Customer{}, http.StatusBadRequest, fmt.Errorf("validation error: %s", errors)
 	}
 
-	if len(customers) == 0 {
-		return []repository.Customer{}, http.StatusInternalServerError, fmt.Errorf("No customers availables")
-
-	}
-
-	return customers, http.StatusOK, nil
-}
-
-func (s *Service) InsertCustomers(name, email string) (repository.Customer, error) {
 	ct, err := s.db.InsertCustomers(context.Background(),
-		repository.InsertCustomersParams{Name: name, Email: email},
-	)
+		repository.InsertCustomersParams{
+			Name:     customer.Name,
+			Email:    customer.Email,
+			Password: customer.Password,
+		})
+
 	if err != nil {
-		return repository.Customer{}, err
+		return repository.Customer{}, http.StatusInternalServerError, err
 	}
 
-	return ct, nil
+	return ct, http.StatusCreated, nil
 }
 
 func (s *Service) Order(ctx context.Context, customerID int32, orderItems []repository.OrderItem) (int, error) {

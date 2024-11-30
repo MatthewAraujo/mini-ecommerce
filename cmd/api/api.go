@@ -31,8 +31,8 @@ func (s *APIServer) Run() error {
 	router := mux.NewRouter()
 	// if the api changes in the future we can just change the version here, and the old version will still be available
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
-	CostumersStore := customers.NewService(s.db, s.dbTx)
-	customersHandler := customers.NewHandler(CostumersStore)
+	costumersService := customers.NewService(s.db, s.dbTx)
+	customersHandler := customers.NewHandler(costumersService)
 	customersHandler.RegisterRoutes(subrouter)
 
 	log.Println("Starting server on", s.addr)

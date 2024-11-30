@@ -10,7 +10,7 @@ import (
 )
 
 const finAllCustomers = `-- name: FinAllCustomers :many
-select id, name, email from customers
+select id, name, email, password from customers
 `
 
 func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
@@ -22,7 +22,12 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 	var items []Customer
 	for rows.Next() {
 		var i Customer
-		if err := rows.Scan(&i.ID, &i.Name, &i.Email); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Password,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -37,31 +42,42 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 }
 
 const findCustomerByID = `-- name: FindCustomerByID :one
-SELECT id, name, email FROM customers
+SELECT id, name, email, password FROM customers
 WHERE id = $1
 `
 
 func (q *Queries) FindCustomerByID(ctx context.Context, id int32) (Customer, error) {
 	row := q.db.QueryRowContext(ctx, findCustomerByID, id)
 	var i Customer
-	err := row.Scan(&i.ID, &i.Name, &i.Email)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+	)
 	return i, err
 }
 
 const insertCustomers = `-- name: InsertCustomers :one
-INSERT INTO customers (name, email)
-VALUES ($1, $2)
-RETURNING id, name, email
+INSERT INTO customers (name, email, password)
+VALUES ($1, $2, $3)
+RETURNING id, name, email, password
 `
 
 type InsertCustomersParams struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (q *Queries) InsertCustomers(ctx context.Context, arg InsertCustomersParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, insertCustomers, arg.Name, arg.Email)
+	row := q.db.QueryRowContext(ctx, insertCustomers, arg.Name, arg.Email, arg.Password)
 	var i Customer
-	err := row.Scan(&i.ID, &i.Name, &i.Email)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+	)
 	return i, err
 }
