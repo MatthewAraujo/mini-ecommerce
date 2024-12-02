@@ -1,10 +1,12 @@
 package customers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/types"
 	"github.com/MatthewAraujo/min-ecommerce/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
@@ -21,7 +23,8 @@ func NewHandler(Service types.CostumersService) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/customers", h.CreateCustomer).Methods(http.MethodPost)
+	router.HandleFunc("/register", h.CreateCustomer).Methods(http.MethodPost)
+	router.HandleFunc("/login", h.Login).Methods(http.MethodPost)
 }
 
 func (h *Handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
@@ -45,4 +48,41 @@ func (h *Handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJSON(w, status, map[string]string{"response": "user created"})
 
+}
+
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	var payload types.LoginCustomerPayload
+
+	logger.Info(r.URL.Path, "Starting login process")
+
+	// Parse o JSON recebido
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		logger.LogError(r.URL.Path, fmt.Errorf("error parsing JSON: %w", err))
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	logger.Info("Payload parsed successfully")
+
+	// Validação do payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		logger.LogError(r.URL.Path, fmt.Errorf("validation error: %s", errors))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("validation error: %s", errors))
+		return
+	}
+
+	logger.Info("Payload validated successfully")
+
+	// Chamando o serviço de login
+	token, status, err := h.Service.Login(&payload)
+	if err != nil {
+		logger.LogError(r.URL.Path, fmt.Errorf("login failed: %w", err))
+		utils.WriteError(w, status, err)
+		return
+	}
+
+	logger.Info("Login successful, returning token")
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
