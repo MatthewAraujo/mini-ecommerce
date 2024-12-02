@@ -53,7 +53,7 @@
   - [ ] Implementar cache para detalhes de orders e customers para melhorar a performance.
 
 - **Configuração do Redis**:
-  - [ ] Configurar o Redis no projeto e integrá-lo com a aplicação.
+  - [X] Configurar o Redis no projeto e integrá-lo com a aplicação.
 
 ### **5. Testes (Unitários e de Integração)**
 
