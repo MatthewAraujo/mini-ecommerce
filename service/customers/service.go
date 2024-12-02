@@ -8,6 +8,9 @@ import (
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
+	"github.com/MatthewAraujo/min-ecommerce/types"
+	"github.com/MatthewAraujo/min-ecommerce/utils"
+	"github.com/go-playground/validator/v10"
 )
 
 type Service struct {
@@ -35,29 +38,39 @@ func (s *Service) BeginTransaction(ctx context.Context) (*repository.Queries, *s
 	return s.db.WithTx(tx), tx, nil
 }
 
-func (s *Service) GetAllCustomers() ([]repository.Customer, int, error) {
-	customers, err := s.db.FinAllCustomers(context.Background())
+func (s *Service) CreateCustomer(customer *types.CreateCustomerPayload) (int, error) {
+	logger.Info("Validating customers")
+	if err := utils.Validate.Struct(customer); err != nil {
+		errors := err.(validator.ValidationErrors)
+		return http.StatusBadRequest, fmt.Errorf("validation error: %s", errors)
+	}
+
+	ctx := context.Background()
+
+	emailAlreadyExists, err := s.db.FindCustomerByEmail(ctx, customer.Email)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		if err != sql.ErrNoRows {
+			return http.StatusInternalServerError, fmt.Errorf("Internal error")
+		}
 	}
 
-	if len(customers) == 0 {
-		return []repository.Customer{}, http.StatusInternalServerError, fmt.Errorf("No customers availables")
-
+	if emailAlreadyExists.Email != "" {
+		return http.StatusConflict, fmt.Errorf("email already has been used")
 	}
 
-	return customers, http.StatusOK, nil
-}
+	logger.Info("inserting customers")
+	_, err = s.db.InsertCustomers(ctx,
+		repository.InsertCustomersParams{
+			Name:     customer.Name,
+			Email:    customer.Email,
+			Password: customer.Password,
+		})
 
-func (s *Service) InsertCustomers(name, email string) (repository.Customer, error) {
-	ct, err := s.db.InsertCustomers(context.Background(),
-		repository.InsertCustomersParams{Name: name, Email: email},
-	)
 	if err != nil {
-		return repository.Customer{}, err
+		return http.StatusInternalServerError, err
 	}
 
-	return ct, nil
+	return http.StatusCreated, nil
 }
 
 func (s *Service) Order(ctx context.Context, customerID int32, orderItems []repository.OrderItem) (int, error) {

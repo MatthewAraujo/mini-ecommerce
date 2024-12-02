@@ -4,8 +4,8 @@
 - [X] Configurar ambiente de desenvolvimento com Go.
 - [X] Configurar PostgreSQL para o banco de dados.
 - [X] Configurar Redis para cache.
-- [ ] Configurar ferramentas de testes unitários e integração.
-- [ ] Criar o projeto com a estrutura de diretórios para API REST.
+- [??] Configurar ferramentas de testes unitários e integração.
+- [X] Criar o projeto com a estrutura de diretórios para API REST.
 
 ### **2. Banco de Dados (PostgreSQL)**
 
@@ -29,13 +29,11 @@
 - **Transações (ACID)**:
   - [X] Implementar transações para garantir que as operações de criação de orders sejam atômicas (incluir itens do order e atualizar stock).
 
-- **Performance de Consultas**:
-  - [ ] Realizar profiling das consultas e btimizar com índices ou ajustes.
   
 ### **3. API REST (Golang)**
 
 - **Estrutura de Endpoints**:
-  - [ ] Criar endpoint `POST /customers` para cadastro de novos customers.
+  - [X] Criar endpoint `POST /customers` para cadastro de novos customers.
   - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
   - [ ] Criar endpoint `POST /products` para adicionar novos products.
   - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.
@@ -78,17 +76,3 @@
   - [ ] Criar pipeline de CI/CD usando GitHub Actions.
   - [ ] Configurar o pipeline para rodar testes unitários e de integração a cada commit.
   - [ ] Configurar o pipeline para realizar o deploy automático da aplicação (inicialmente em um ambiente de testes, depois produção).
-
-### **7. Performance e Otimização**
-
-- **Profiling de Performance**:
-  - [ ] Usar ferramentas como `pprof` para análise de performance da aplicação.
-  - [ ] Monitorar e otimizar endpoints de maior carga.
-
-- **Cache e Indices**:
-  - [ ] Testar e otimizar as estratégias de cache no Redis.
-  - [ ] Analisar e melhorar as consultas SQL usando `EXPLAIN`.
- 
-- **README**:
-  - [ ] Escrever o README do projeto com detalhes sobre a configuração, execução e funcionamento do sistema.
-  
