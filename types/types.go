@@ -1,9 +1,7 @@
 package types
 
-import "github.com/MatthewAraujo/min-ecommerce/repository"
-
 type CostumersService interface {
-	CreateCustomer(c *CreateCustomerPayload) (repository.Customer, int, error)
+	CreateCustomer(c *CreateCustomerPayload) (int, error)
 }
 
 type CreateCustomerPayload struct {

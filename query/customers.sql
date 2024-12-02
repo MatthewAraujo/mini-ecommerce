@@ -9,3 +9,8 @@ RETURNING *;
 -- name: FindCustomerByID :one
 SELECT * FROM customers
 WHERE id = $1;
+
+-- name: FindCustomerByEmail :one
+SELECT email FROM customers
+WHERE email = $1
+LIMIT 1;

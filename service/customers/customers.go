@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var logger = utils.NewParentLogger("Rota api/v1/customer")
+
 type Handler struct {
 	Service types.CostumersService
 }
@@ -19,23 +21,27 @@ func NewHandler(Service types.CostumersService) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/customers", h.CreateCustomer).Methods(http.MethodGet)
+	router.HandleFunc("/customers", h.CreateCustomer).Methods(http.MethodPost)
 }
 
 func (h *Handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
+	logger.Info(r.URL.Path, "Creating customer")
+
 	var payload types.CreateCustomerPayload
 
 	if err := utils.ParseJSON(r, &payload); err != nil {
+		logger.LogError(r.URL.Path, err, "Erro ao parsear o JSON")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	ct, status, err := h.Service.CreateCustomer(&payload)
+	status, err := h.Service.CreateCustomer(&payload)
 	if err != nil {
+		logger.LogError(r.URL.Path, err)
 		utils.WriteError(w, status, err)
 		return
 	}
 
-	utils.WriteJSON(w, status, ct)
+	utils.WriteJSON(w, status, "user created")
 
 }

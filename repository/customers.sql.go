@@ -41,6 +41,18 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 	return items, nil
 }
 
+const findCustomerByEmail = `-- name: FindCustomerByEmail :one
+SELECT email FROM customers
+WHERE email = $1
+LIMIT 1
+`
+
+func (q *Queries) FindCustomerByEmail(ctx context.Context, email string) (string, error) {
+	row := q.db.QueryRowContext(ctx, findCustomerByEmail, email)
+	err := row.Scan(&email)
+	return email, err
+}
+
 const findCustomerByID = `-- name: FindCustomerByID :one
 SELECT id, name, email, password FROM customers
 WHERE id = $1

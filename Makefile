@@ -16,7 +16,7 @@ migration:
 	@migrate create -ext sql -dir $(MIGRATION_DIR) $(NAME)
 
 migrate-up:
-	@go run cmd/migrate/main.go up
+	@go run cmd/migrate/main.go up 
 
 migrate-down:
 	@go run cmd/migrate/main.go down
@@ -27,6 +27,7 @@ migrate-down:
 
 watch:
 	@if command -v air > /dev/null; then \
+            docker compose up -d; \
             air; \
             echo "Watching...";\
         else \
