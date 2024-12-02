@@ -12,8 +12,11 @@ import (
 	database "github.com/MatthewAraujo/min-ecommerce/db"
 	"github.com/MatthewAraujo/min-ecommerce/pkg/assert"
 	"github.com/MatthewAraujo/min-ecommerce/repository"
+	"github.com/MatthewAraujo/min-ecommerce/utils"
 	"github.com/redis/go-redis/v9"
 )
+
+var logger = utils.NewParentLogger("starting API")
 
 func main() {
 	url := configs.Envs.Postgres.URL
@@ -35,7 +38,7 @@ func main() {
 
 	err = healthRedis(redis)
 	assert.NoError(err, "Redis is offline")
-	log.Printf("Connect to redis")
+	logger.Info("Connect to redis")
 
 	repository := repository.New(db)
 
@@ -51,7 +54,7 @@ func initStorage(db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	log.Println("DB: Successfully connected!")
+	logger.Info("DB: Successfully connected!")
 }
 
 func healthRedis(redisClient *redis.Client) error {
