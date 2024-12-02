@@ -11,6 +11,7 @@ SELECT * FROM customers
 WHERE id = $1;
 
 -- name: FindCustomerByEmail :one
-SELECT email FROM customers
+SELECT * 
+FROM customers
 WHERE email = $1
 LIMIT 1;

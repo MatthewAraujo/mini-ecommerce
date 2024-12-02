@@ -4,7 +4,7 @@
 - [X] Configurar ambiente de desenvolvimento com Go.
 - [X] Configurar PostgreSQL para o banco de dados.
 - [X] Configurar Redis para cache.
-- [ ] Configurar ferramentas de testes unitários e integração.
+- [??] Configurar ferramentas de testes unitários e integração.
 - [X] Criar o projeto com a estrutura de diretórios para API REST.
 
 ### **2. Banco de Dados (PostgreSQL)**
@@ -33,7 +33,7 @@
 ### **3. API REST (Golang)**
 
 - **Estrutura de Endpoints**:
-  - [ ] Criar endpoint `POST /customers` para cadastro de novos customers.
+  - [X] Criar endpoint `POST /customers` para cadastro de novos customers.
   - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
   - [ ] Criar endpoint `POST /products` para adicionar novos products.
   - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.

@@ -49,10 +49,12 @@ func (s *Service) CreateCustomer(customer *types.CreateCustomerPayload) (int, er
 
 	emailAlreadyExists, err := s.db.FindCustomerByEmail(ctx, customer.Email)
 	if err != nil {
-		return http.StatusInternalServerError, fmt.Errorf("Internal error")
+		if err != sql.ErrNoRows {
+			return http.StatusInternalServerError, fmt.Errorf("Internal error")
+		}
 	}
 
-	if emailAlreadyExists != "" {
+	if emailAlreadyExists.Email != "" {
 		return http.StatusConflict, fmt.Errorf("email already has been used")
 	}
 

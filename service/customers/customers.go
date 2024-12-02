@@ -29,6 +29,7 @@ func (h *Handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 
 	var payload types.CreateCustomerPayload
 
+	logger.Info("Parsing JSON")
 	if err := utils.ParseJSON(r, &payload); err != nil {
 		logger.LogError(r.URL.Path, err, "Erro ao parsear o JSON")
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -42,6 +43,6 @@ func (h *Handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, status, "user created")
+	utils.WriteJSON(w, status, map[string]string{"response": "user created"})
 
 }
