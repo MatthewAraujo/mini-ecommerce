@@ -25,7 +25,7 @@ func NewHandler(Service types.ProductService, store repository.Queries) *Handler
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/register", auth.WithJWTAuth(h.CreateProduct, h.store)).Methods(http.MethodPost)
+	router.HandleFunc("/register", auth.WithJWTAuth(h.CreateProduct, h.store, "admin")).Methods(http.MethodPost)
 }
 
 func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +47,6 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, status, map[string]string{"response": "user created"})
+	utils.WriteJSON(w, status, map[string]string{"response": "product created"})
 
 }

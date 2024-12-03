@@ -32,57 +32,58 @@ func (s *Service) BeginTransaction(ctx context.Context) (*repository.Queries, *s
 		return nil, nil, err
 	}
 
-	defer tx.Rollback()
-
 	return s.db.WithTx(tx), tx, nil
 }
 
 func (s *Service) CreateProduct(product *types.CreateProductPayload) (int, error) {
 	logger.Info("Validating product")
+
 	if err := utils.Validate.Struct(product); err != nil {
 		errors := err.(validator.ValidationErrors)
 		return http.StatusBadRequest, fmt.Errorf("validation error: %s", errors)
 	}
 
 	ctx := context.Background()
-
-	productAlreadyExists, err := s.db.FindProductByName(ctx, product.Name)
+	txQueries, tx, err := s.BeginTransaction(ctx)
 	if err != nil {
-		if err != sql.ErrNoRows {
-			logger.Warn(err.Error())
-			return http.StatusInternalServerError, fmt.Errorf("Internal error")
-		}
+		return http.StatusInternalServerError, fmt.Errorf("failed to begin transaction: %w", err)
 	}
 
-	if productAlreadyExists.Name == "" {
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	productAlreadyExists, err := txQueries.FindProductByName(ctx, product.Name)
+	if err != nil && err != sql.ErrNoRows {
+		logger.Warn(err.Error())
+		return http.StatusInternalServerError, fmt.Errorf("Internal error")
+	}
+
+	if productAlreadyExists.Name != "" {
 		return http.StatusConflict, fmt.Errorf("product already exists")
 	}
 
 	logger.Info("inserting product")
-
-	txQueries, tx, err := s.BeginTransaction(ctx)
-	if err != nil {
-		return 500, fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			tx.Commit()
-		}
-	}()
-
 	productBase, err := txQueries.InsertProduct(ctx,
 		repository.InsertProductParams{
 			Name:        product.Name,
-			Description: product.Description,
+			Description: utils.ToNullString(product.Description),
 			Price:       product.Price,
 		})
 
 	if err != nil {
-		return http.StatusInternalServerError, err
+		logger.LogError("ERRO", err)
+		return http.StatusInternalServerError, fmt.Errorf("internal error")
 	}
 
+	logger.Info("inserting stock")
 	_, err = txQueries.InsertStockProduct(ctx, repository.InsertStockProductParams{
 		ProductID:         productBase.ID,
 		AvailableQuantity: int32(product.Quantity),

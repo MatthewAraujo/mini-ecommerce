@@ -4,9 +4,8 @@ WHERE id = $1;
 
 -- name: FindProductByName :one
 SELECT * FROM products
-WHERE name = $1;
-
-
+WHERE name = $1
+LIMIT 1;
 
 -- name: InsertProduct :one
 INSERT INTO products (name, description, price ) 

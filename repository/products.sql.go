@@ -30,6 +30,7 @@ func (q *Queries) FindProductByID(ctx context.Context, id int32) (Product, error
 const findProductByName = `-- name: FindProductByName :one
 SELECT id, name, description, price FROM products
 WHERE name = $1
+LIMIT 1
 `
 
 func (q *Queries) FindProductByName(ctx context.Context, name string) (Product, error) {

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -26,4 +27,11 @@ func ParseJSON(r *http.Request, payload any) error {
 	}
 	return json.NewDecoder(r.Body).Decode(payload)
 
+}
+
+func ToNullString(s string) sql.NullString {
+	if s == "" {
+		return sql.NullString{String: "", Valid: false}
+	}
+	return sql.NullString{String: s, Valid: true}
 }
