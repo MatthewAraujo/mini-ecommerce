@@ -35,7 +35,7 @@
 - **Estrutura de Endpoints**:
   - [X] Criar endpoint `POST /customers` para cadastro de novos customers.
   - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
-  - [ ] Criar endpoint `POST /products` para adicionar novos products.
+  - [X] Criar endpoint `POST /products` para adicionar novos products.
   - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.
   - [ ] Criar endpoint `POST /orders` para criar um order.
   - [ ] Criar endpoint `GET /orders/{id}` para visualizar detalhes de um order.
@@ -45,6 +45,7 @@
 - **JWT para Autenticação**:
   - [X] Implementar autenticação com JWT nas rotas protegidas.
   - [X] Adicionar middleware para verificar o token em rotas privadas.
+  - [X] Sistemas de ROLE para usuarios
 
 ### **4. Redis para Caching**
 
