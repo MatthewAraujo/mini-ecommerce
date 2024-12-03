@@ -3,86 +3,116 @@ package auth
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
-	"strconv"
+	"strings"
 	"time"
 
 	configs "github.com/MatthewAraujo/min-ecommerce/config"
 	"github.com/MatthewAraujo/min-ecommerce/repository"
 	"github.com/MatthewAraujo/min-ecommerce/utils"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 type contextKey string
 
 const UserKey contextKey = "userID"
 
-func WithJWTAuth(handleFunc http.HandlerFunc, store repository.Queries) http.HandlerFunc {
+var logger = utils.NewParentLogger("AUTH")
+
+func WithJWTAuth(handleFunc http.HandlerFunc, store repository.Queries, requiredRole string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// get the token from the request
+		logger.Info("VALIDATE JWT")
 		tokenString := getTokenFromRequest(r)
-		//validate the JWT
+
 		token, err := validateJWT(tokenString)
 		if err != nil {
-			log.Printf("error validating token: %v", err)
+			logger.Info("error validating token: %v", err.Error())
 			permissionDenied(w)
 			return
 		}
 
 		if !token.Valid {
-			log.Println("token is invalid")
+			logger.Info("token is invalid")
 			permissionDenied(w)
 			return
 		}
 
-		// if is we need to fech the user from the DB
 		claims := token.Claims.(jwt.MapClaims)
-		str := claims["userID"].(string)
-		userID, err := strconv.Atoi(str)
-		if err != nil {
-			log.Printf("error parsing userID: %v", err)
+
+		userIDValue, ok := claims["userID"]
+		if !ok {
+			logger.Info("userID not found in claims")
 			permissionDenied(w)
 			return
 		}
 
-		u, err := store.FindCustomerByID(context.Background(), int32(userID))
-		if err != nil {
-			log.Printf("error fetching user: %v", err)
+		userID, ok := userIDValue.(float64)
+		if !ok {
+			logger.Info("userID is not a number")
 			permissionDenied(w)
 			return
 		}
-		// set context with the user
+
+		roleValue, ok := claims["role"]
+		if !ok {
+			logger.Info("role not found in claims")
+			permissionDenied(w)
+			return
+		}
+
+		role, ok := roleValue.(string)
+		if !ok {
+			logger.Info("role is not a string")
+			permissionDenied(w)
+			return
+		}
+
+		if role != requiredRole {
+			logger.Info("user does not have the required role: %v", requiredRole)
+			permissionDenied(w)
+			return
+		}
+
+		u, err := store.FindCustomerByID(context.Background(), int32(userID)) // Converta para int32
+		if err != nil {
+			logger.Info("error fetching user: %v", err.Error())
+			permissionDenied(w)
+			return
+		}
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserKey, u.ID)
 		r = r.WithContext(ctx)
-		// call the next handler
+
 		handleFunc(w, r)
 	}
 }
 
 func getTokenFromRequest(r *http.Request) string {
-	// get the token from the request
 	tokenAuth := r.Header.Get("Authorization")
 	if tokenAuth == "" {
-		return tokenAuth
+		return ""
 	}
+
+	tokenParts := strings.Split(tokenAuth, " ")
+	if len(tokenParts) == 2 {
+		return tokenParts[1]
+	}
+
 	return ""
 }
 
-func CreateJWT(secret []byte, userID string) (string, error) {
+func CreateJWT(secret []byte, userID int32, role string) (string, error) {
 	expiration := time.Second * time.Duration(configs.Envs.JWT.JWTExpirationInSeconds)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userID":  userID,
+		"role":    role,
 		"expires": time.Now().Add(expiration).Unix(),
 	})
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
 		return "", err
 	}
-
 	return tokenString, nil
 }
 
@@ -98,13 +128,4 @@ func validateJWT(tokenString string) (*jwt.Token, error) {
 
 func permissionDenied(w http.ResponseWriter) {
 	utils.WriteError(w, http.StatusForbidden, fmt.Errorf("permission denied"))
-}
-
-func GetUserIDFromContext(ctx context.Context) uuid.UUID {
-	userID, ok := ctx.Value(UserKey).(uuid.UUID)
-	if !ok {
-		return uuid.Nil
-	}
-
-	return userID
 }

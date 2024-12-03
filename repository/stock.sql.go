@@ -40,3 +40,21 @@ func (q *Queries) GetStockByProductID(ctx context.Context, productID int32) (Sto
 	err := row.Scan(&i.ID, &i.ProductID, &i.AvailableQuantity)
 	return i, err
 }
+
+const insertStockProduct = `-- name: InsertStockProduct :one
+INSERT INTO stock (product_id, available_quantity)
+VALUES ($1,$2)
+RETURNING id, product_id, available_quantity
+`
+
+type InsertStockProductParams struct {
+	ProductID         int32 `json:"product_id"`
+	AvailableQuantity int32 `json:"available_quantity"`
+}
+
+func (q *Queries) InsertStockProduct(ctx context.Context, arg InsertStockProductParams) (Stock, error) {
+	row := q.db.QueryRowContext(ctx, insertStockProduct, arg.ProductID, arg.AvailableQuantity)
+	var i Stock
+	err := row.Scan(&i.ID, &i.ProductID, &i.AvailableQuantity)
+	return i, err
+}
