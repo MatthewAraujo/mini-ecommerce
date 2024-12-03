@@ -8,4 +8,7 @@ AND available_quantity >= $2;
 SELECT * FROM stock
 WHERE product_id = $1;
 
-
+-- name: InsertStockProduct :one
+INSERT INTO stock (product_id, available_quantity)
+VALUES ($1,$2)
+RETURNING *;
