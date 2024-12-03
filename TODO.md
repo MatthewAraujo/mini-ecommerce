@@ -43,8 +43,8 @@
   - [ ] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
 
 - **JWT para Autenticação**:
-  - [ ] Implementar autenticação com JWT nas rotas protegidas.
-  - [ ] Adicionar middleware para verificar o token em rotas privadas.
+  - [X] Implementar autenticação com JWT nas rotas protegidas.
+  - [X] Adicionar middleware para verificar o token em rotas privadas.
 
 ### **4. Redis para Caching**
 
