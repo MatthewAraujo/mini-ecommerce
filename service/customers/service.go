@@ -113,7 +113,7 @@ func (s *Service) Login(customer *types.LoginCustomerPayload) (string, int, erro
 
 	logger.Info("Service.Login", "Password verified, generating token")
 	secret := []byte(configs.Envs.JWT.JWTSecret)
-	token, err := auth.CreateJWT(secret, u.ID, "user")
+	token, err := auth.CreateJWT(secret, u.ID, string(u.Role))
 	if err != nil {
 		logger.LogError("Service.Login", fmt.Errorf("error creating token: %w", err))
 		return "", http.StatusInternalServerError, fmt.Errorf("error creating token: %w", err)
