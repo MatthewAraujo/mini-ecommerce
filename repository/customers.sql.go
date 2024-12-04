@@ -10,7 +10,7 @@ import (
 )
 
 const finAllCustomers = `-- name: FinAllCustomers :many
-select id, name, email, password from customers
+select id, name, email, password, role from customers
 `
 
 func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
@@ -27,6 +27,7 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 			&i.Name,
 			&i.Email,
 			&i.Password,
+			&i.Role,
 		); err != nil {
 			return nil, err
 		}
@@ -42,7 +43,7 @@ func (q *Queries) FinAllCustomers(ctx context.Context) ([]Customer, error) {
 }
 
 const findCustomerByEmail = `-- name: FindCustomerByEmail :one
-SELECT id, name, email, password 
+SELECT id, name, email, password, role 
 FROM customers
 WHERE email = $1
 LIMIT 1
@@ -56,12 +57,13 @@ func (q *Queries) FindCustomerByEmail(ctx context.Context, email string) (Custom
 		&i.Name,
 		&i.Email,
 		&i.Password,
+		&i.Role,
 	)
 	return i, err
 }
 
 const findCustomerByID = `-- name: FindCustomerByID :one
-SELECT id, name, email, password FROM customers
+SELECT id, name, email, password, role FROM customers
 WHERE id = $1
 `
 
@@ -73,30 +75,38 @@ func (q *Queries) FindCustomerByID(ctx context.Context, id int32) (Customer, err
 		&i.Name,
 		&i.Email,
 		&i.Password,
+		&i.Role,
 	)
 	return i, err
 }
 
 const insertCustomers = `-- name: InsertCustomers :one
-INSERT INTO customers (name, email, password)
-VALUES ($1, $2, $3)
-RETURNING id, name, email, password
+INSERT INTO customers (name, email, password, role)
+VALUES ($1, $2, $3, $4)
+RETURNING id, name, email, password, role
 `
 
 type InsertCustomersParams struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string   `json:"name"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	Role     UserRole `json:"role"`
 }
 
 func (q *Queries) InsertCustomers(ctx context.Context, arg InsertCustomersParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, insertCustomers, arg.Name, arg.Email, arg.Password)
+	row := q.db.QueryRowContext(ctx, insertCustomers,
+		arg.Name,
+		arg.Email,
+		arg.Password,
+		arg.Role,
+	)
 	var i Customer
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Password,
+		&i.Role,
 	)
 	return i, err
 }

@@ -9,6 +9,7 @@ type CreateCustomerPayload struct {
 	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=3,max=100"`
+	Role     string `json:"role" validate:"required,oneof=user admin"`
 }
 
 type LoginCustomerPayload struct {
@@ -25,4 +26,11 @@ type CreateProductPayload struct {
 
 type ProductService interface {
 	CreateProduct(p *CreateProductPayload) (int, error)
+}
+
+type ValidationErrorResponse struct {
+	Field      string `json:"field"`
+	Validation string `json:"validation"`
+	Value      string `json:"value,omitempty"`
+	Message    string `json:"message"`
 }

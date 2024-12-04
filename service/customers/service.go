@@ -3,6 +3,7 @@ package customers
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -43,8 +44,18 @@ func (s *Service) BeginTransaction(ctx context.Context) (*repository.Queries, *s
 func (s *Service) CreateCustomer(customer *types.CreateCustomerPayload) (int, error) {
 	logger.Info("Validating customers")
 	if err := utils.Validate.Struct(customer); err != nil {
-		errors := err.(validator.ValidationErrors)
-		return http.StatusBadRequest, fmt.Errorf("validation error: %s", errors)
+		// Verifica se o erro é do tipo ValidationErrors
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			// Traduz os erros para uma estrutura personalizada
+			errorMessages := utils.TranslateValidationErrors(validationErrors)
+
+			// Retorna um JSON detalhado dos erros
+			response, _ := json.Marshal(errorMessages)
+			return http.StatusBadRequest, fmt.Errorf("validation error: %s", response)
+		}
+
+		// Para outros tipos de erro, retorne um erro genérico
+		return http.StatusInternalServerError, fmt.Errorf("internal server error: %s", err)
 	}
 
 	ctx := context.Background()
@@ -72,6 +83,7 @@ func (s *Service) CreateCustomer(customer *types.CreateCustomerPayload) (int, er
 			Name:     customer.Name,
 			Email:    customer.Email,
 			Password: hashedPassword,
+			Role:     repository.UserRole(customer.Role),
 		})
 
 	if err != nil {
