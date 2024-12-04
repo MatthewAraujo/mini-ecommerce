@@ -37,10 +37,10 @@
   - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
   - [X] Criar endpoint `POST /products` para adicionar novos products.
   - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.
-  - [ ] Criar endpoint `POST /orders` para criar um order.
+  - [X] Criar endpoint `POST /orders` para criar um order.
   - [ ] Criar endpoint `GET /orders/{id}` para visualizar detalhes de um order.
   - [ ] Criar endpoint `PUT /orders/{id}` para atualizar o status do order.
-  - [ ] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
+  - [X] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
 
 - **JWT para Autenticaço**:
   - [X] Implementar autenticação com JWT nas rotas protegidas.
@@ -77,3 +77,64 @@
   - [ ] Criar pipeline de CI/CD usando GitHub Actions.
   - [ ] Configurar o pipeline para rodar testes unitários e de integração a cada commit.
   - [ ] Configurar o pipeline para realizar o deploy automático da aplicação (inicialmente em um ambiente de testes, depois produção).
+
+### **7. Criar um Microsserviço para Gerenciar os Status dos Orders**
+
+#### **Estrutura do Microsserviço**
+
+1. **Definição do Propósito**:
+   - O microsserviço será responsável por:
+     - Gerenciar mudanças de status dos pedidos.
+     - Emitir eventos baseados em alterações de status (ex.: enviar notificações).
+     - Monitorar inconsistências ou falhas em transições de estado.
+
+2. **Configuração Inicial**:
+   - [ ] Criar um novo repositório para o microsserviço.
+   - [ ] Configurar o ambiente do microsserviço com Go e dependências necessárias.
+   - [ ] Configurar o banco de dados (PostgreSQL) para armazenar logs de transições de status.
+   - [ ] Configurar um serviço de mensagens (ex.: RabbitMQ, Kafka) para comunicação assíncrona com outros microsserviços.
+
+3. **Estrutura do Banco de Dados**:
+   - [ ] Criar tabela `order_status_logs` com campos:
+     - `id`: Chave primária.
+     - `order_id`: Identificador do pedido.
+     - `old_status`: Status anterior.
+     - `new_status`: Novo status.
+     - `changed_at`: Timestamp da mudança.
+   - [ ] Adicionar triggers no banco de dados principal para enviar eventos em cada mudança de status.
+
+4. **Endpoints do Microsserviço**:
+   - [ ] `PUT /orders/{id}/status`:
+     - Valida a transição de status com base em regras de negócio.
+     - Atualiza o status do pedido.
+     - Armazena logs de mudança no banco de dados.
+   - [ ] `GET /orders/{id}/status`:
+     - Retorna o status atual do pedido.
+   - [ ] `GET /orders/logs`:
+     - Retorna um histórico de transições de status para análise.
+
+5. **Regras de Negócio**:
+   - [ ] Validar as transições permitidas:
+     - **Exemplo de transições válidas**:
+       - `pending` → `send`.
+       - `send` → `arrived`.
+     - Transições inválidas devem retornar um erro apropriado.
+   - [ ] Adicionar suporte para novos estados (ex.: `cancelled`).
+
+6. **Eventos e Notificações**:
+   - [ ] Emitir eventos assíncronos (ex.: `OrderStatusChanged`) via RabbitMQ ou Kafka.
+   - [ ] Configurar consumidores para esses eventos em outros serviços (ex.: notificações por e-mail ou SMS).
+   - [ ] Publicar mensagens para o Redis para integrar com serviços de cache.
+
+7. **Testes**:
+   - [ ] Testar as regras de validação de transições.
+   - [ ] Testar a criação e recuperação de logs de status.
+   - [ ] Testar a publicação de eventos em serviços de mensagens.
+
+8. **Escalabilidade e Observabilidade**:
+   - [ ] Configurar métricas e logs para monitorar o microsserviço (ex.: Prometheus, Grafana).
+   - [ ] Configurar alertas para monitorar falhas em transições de status ou atrasos no processamento de eventos.
+
+9. **CI/CD para o Microsserviço**:
+   - [ ] Configurar pipelines independentes para o deploy e testes do microsserviço.
+   - [ ] Implementar deploy automático em um cluster Kubernetes (se aplicável).
