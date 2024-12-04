@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
+	"github.com/MatthewAraujo/min-ecommerce/service/auth/order"
 	"github.com/MatthewAraujo/min-ecommerce/service/customers"
 	"github.com/MatthewAraujo/min-ecommerce/service/products"
 	"github.com/gorilla/mux"
@@ -39,6 +40,10 @@ func (s *APIServer) Run() error {
 	productService := products.NewService(s.db, s.dbTx)
 	productHandler := products.NewHandler(productService, *s.db)
 	productHandler.RegisterRoutes(subrouter.PathPrefix("/product").Subrouter())
+
+	orderService := order.NewService(s.db, s.dbTx)
+	orderHandler := order.NewHandler(orderService, *s.db)
+	orderHandler.RegisterRoutes(subrouter.PathPrefix("/order").Subrouter())
 
 	log.Println("Starting server on", s.addr)
 

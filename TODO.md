@@ -42,7 +42,7 @@
   - [ ] Criar endpoint `PUT /orders/{id}` para atualizar o status do order.
   - [ ] Criar endpoint `POST /auth/login` para autenticação de usuários com JWT.
 
-- **JWT para Autenticação**:
+- **JWT para Autenticaço**:
   - [X] Implementar autenticação com JWT nas rotas protegidas.
   - [X] Adicionar middleware para verificar o token em rotas privadas.
   - [X] Sistemas de ROLE para usuarios
