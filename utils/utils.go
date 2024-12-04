@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
+	"github.com/MatthewAraujo/min-ecommerce/types"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -34,4 +36,23 @@ func ToNullString(s string) sql.NullString {
 		return sql.NullString{String: "", Valid: false}
 	}
 	return sql.NullString{String: s, Valid: true}
+}
+
+func TranslateValidationErrors(errs validator.ValidationErrors) []types.ValidationErrorResponse {
+	var errors []types.ValidationErrorResponse
+	for _, err := range errs {
+		message := fmt.Sprintf("O campo '%s' falhou na validação: %s", err.Field(), err.Tag())
+		if err.Tag() == "required" {
+			message = fmt.Sprintf("O campo '%s' é obrigatório.", err.Field())
+		} else if err.Tag() == "oneof" {
+			message = fmt.Sprintf("O campo '%s' deve ser um dos seguintes valores: %s.", err.Field(), err.Param())
+		}
+		errors = append(errors, types.ValidationErrorResponse{
+			Field:      err.Field(),
+			Validation: err.Tag(),
+			Value:      err.Param(),
+			Message:    message,
+		})
+	}
+	return errors
 }
