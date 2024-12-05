@@ -36,7 +36,7 @@
   - [X] Criar endpoint `POST /customers` para cadastro de novos customers.
   - [ ] Criar endpoint `GET /customers/{id}` para visualizar detalhes de um customer.
   - [X] Criar endpoint `POST /products` para adicionar novos products.
-  - [ ] Criar endpoint `GET /produccts` para pegar todos os produtos
+  - [ ] Criar endpoint `GET /products` para pegar todos os produtos
       - [ ] Criar um sistema de paginação  
   - [ ] Criar endpoint `GET /products/{id}` para visualizar detalhes de um product.
   - [X] Criar endpoint `POST /orders` para criar um order.
