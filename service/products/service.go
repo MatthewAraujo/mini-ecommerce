@@ -3,7 +3,9 @@ package products
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
@@ -39,8 +41,14 @@ func (s *Service) CreateProduct(product *types.CreateProductPayload) (int, error
 	logger.Info("Validating product")
 
 	if err := utils.Validate.Struct(product); err != nil {
-		errors := err.(validator.ValidationErrors)
-		return http.StatusBadRequest, fmt.Errorf("validation error: %s", errors)
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errorMessages := utils.TranslateValidationErrors(validationErrors)
+
+			response, _ := json.Marshal(errorMessages)
+			return http.StatusBadRequest, fmt.Errorf("validation error: %s", response)
+		}
+
+		return http.StatusInternalServerError, fmt.Errorf("internal server error: %s", err)
 	}
 
 	ctx := context.Background()
@@ -93,4 +101,59 @@ func (s *Service) CreateProduct(product *types.CreateProductPayload) (int, error
 	}
 
 	return http.StatusCreated, nil
+}
+
+func (s *Service) GetAllProducts(p *types.GetAllProductsPayload) (types.GetAllProductsResponse, int, error) {
+
+	logger.Info("Get All Products")
+	if err := utils.Validate.Struct(p); err != nil {
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errorMessages := utils.TranslateValidationErrors(validationErrors)
+
+			response, _ := json.Marshal(errorMessages)
+			return types.GetAllProductsResponse{}, http.StatusBadRequest, fmt.Errorf("validation error: %s", response)
+		}
+
+		return types.GetAllProductsResponse{}, http.StatusInternalServerError, fmt.Errorf("internal server error: %s", err)
+	}
+
+	ctx := context.Background()
+	offset := (p.Page - 1) * utils.PAGINATION_LIMIT
+
+	products, err := s.db.GetAllProductsPagination(ctx, repository.GetAllProductsPaginationParams{
+		Limit:  int32(utils.PAGINATION_LIMIT),
+		Offset: int32(offset),
+	})
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.Warn(err.Error())
+			return types.GetAllProductsResponse{}, http.StatusInternalServerError, fmt.Errorf("Internal error")
+		}
+	}
+
+	totalProducts, err := s.db.CountProducts(ctx)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.Warn(err.Error())
+			return types.GetAllProductsResponse{}, http.StatusInternalServerError, fmt.Errorf("Internal error")
+		}
+	}
+
+	totalPages := math.Ceil(float64(totalProducts) / float64(utils.PAGINATION_LIMIT))
+	PAGINATION_LIMIT := int64(utils.PAGINATION_LIMIT)
+	productsRemaining := totalProducts - (int64(p.Page)-1)*PAGINATION_LIMIT
+
+	pagination := types.Pagination{
+		CurrentPage: p.Page,
+		TotalPages:  int(totalPages),
+		TotalItems:  int(totalProducts),
+		PageSize:    int(math.Min(float64(utils.PAGINATION_LIMIT), float64(productsRemaining))),
+	}
+
+	response := types.GetAllProductsResponse{
+		Products:   products,
+		Pagination: pagination,
+	}
+
+	return response, http.StatusOK, nil
 }

@@ -12,3 +12,10 @@ INSERT INTO products (name, description, price )
 VALUES ($1, $2, $3)
 RETURNING *;
 
+
+-- name: GetAllProductsPagination :many 
+SELECT * FROM products LIMIT $1 OFFSET $2;
+
+-- name: CountProducts :one
+SELECT COUNT(*) AS TOTAL
+FROM products;

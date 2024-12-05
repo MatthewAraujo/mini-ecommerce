@@ -10,6 +10,18 @@ import (
 	"database/sql"
 )
 
+const countProducts = `-- name: CountProducts :one
+SELECT COUNT(*) AS TOTAL
+FROM products
+`
+
+func (q *Queries) CountProducts(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countProducts)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
 const findProductByID = `-- name: FindProductByID :one
 SELECT id, name, description, price FROM products
 WHERE id = $1
@@ -43,6 +55,43 @@ func (q *Queries) FindProductByName(ctx context.Context, name string) (Product, 
 		&i.Price,
 	)
 	return i, err
+}
+
+const getAllProductsPagination = `-- name: GetAllProductsPagination :many
+SELECT id, name, description, price FROM products LIMIT $1 OFFSET $2
+`
+
+type GetAllProductsPaginationParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) GetAllProductsPagination(ctx context.Context, arg GetAllProductsPaginationParams) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, getAllProductsPagination, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const insertProduct = `-- name: InsertProduct :one

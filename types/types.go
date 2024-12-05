@@ -1,5 +1,7 @@
 package types
 
+import "github.com/MatthewAraujo/min-ecommerce/repository"
+
 type ValidationErrorResponse struct {
 	Field      string `json:"field"`
 	Validation string `json:"validation"`
@@ -24,6 +26,11 @@ type LoginCustomerPayload struct {
 	Password string `json:"password" validate:"required,min=3,max=100"`
 }
 
+type ProductService interface {
+	CreateProduct(p *CreateProductPayload) (int, error)
+	GetAllProducts(p *GetAllProductsPayload) (GetAllProductsResponse, int, error)
+}
+
 type CreateProductPayload struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required,max=255"`
@@ -31,8 +38,20 @@ type CreateProductPayload struct {
 	Quantity    int    `json:"quantity" validate:"required"`
 }
 
-type ProductService interface {
-	CreateProduct(p *CreateProductPayload) (int, error)
+type GetAllProductsPayload struct {
+	Page int `json:"page" validate:"required,min=1"`
+}
+
+type Pagination struct {
+	CurrentPage int `json:"currentPage"`
+	TotalPages  int `json:"totalPages"`
+	TotalItems  int `json:"totalItems"`
+	PageSize    int `json:"pageSize"`
+}
+
+type GetAllProductsResponse struct {
+	Products   []repository.Product
+	Pagination Pagination
 }
 
 type OrderService interface {
