@@ -7,23 +7,26 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"time"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
 	"github.com/MatthewAraujo/min-ecommerce/types"
 	"github.com/MatthewAraujo/min-ecommerce/utils"
 	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 )
 
 type Service struct {
-	db *repository.Queries
-
-	dbTx *sql.DB
+	db         *repository.Queries
+	dbTx       *sql.DB
+	redisStore *redis.Client
 }
 
-func NewService(db *repository.Queries, dbTx *sql.DB) *Service {
+func NewService(db *repository.Queries, dbTx *sql.DB, redisStore *redis.Client) *Service {
 	return &Service{
-		db:   db,
-		dbTx: dbTx,
+		db:         db,
+		dbTx:       dbTx,
+		redisStore: redisStore,
 	}
 }
 
@@ -104,7 +107,6 @@ func (s *Service) CreateProduct(product *types.CreateProductPayload) (int, error
 }
 
 func (s *Service) GetAllProducts(p *types.GetAllProductsPayload) (types.GetAllProductsResponse, int, error) {
-
 	logger.Info("Get All Products")
 	if err := utils.Validate.Struct(p); err != nil {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
@@ -156,4 +158,54 @@ func (s *Service) GetAllProducts(p *types.GetAllProductsPayload) (types.GetAllPr
 	}
 
 	return response, http.StatusOK, nil
+}
+
+func (s *Service) getTopTenFromRedis() ([]repository.Product, error) {
+	ctx := context.Background()
+	products := "products:top-ten"
+
+	productsJSON, err := s.redisStore.Get(ctx, products).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return nil, fmt.Errorf("cache expired or key not found")
+		}
+		return nil, fmt.Errorf("failed to get posts from Redis: %w", err)
+	}
+
+	var pd []repository.Product
+	if err := json.Unmarshal([]byte(productsJSON), &pd); err != nil {
+		return nil, fmt.Errorf("failed to decode posts JSON: %w", err)
+	}
+
+	return pd, nil
+}
+
+func (s *Service) setTopTenToRedis(products []*repository.Product) error {
+	ctx := context.Background()
+	productsQuery := "products:top-ten"
+
+	productsJSON, err := json.Marshal(products)
+	if err != nil {
+		return fmt.Errorf("failed to serialize posts: %w", err)
+	}
+
+	err = s.redisStore.Set(ctx, productsQuery, productsJSON, 24*time.Second).Err()
+	if err != nil {
+		return fmt.Errorf("failed to set posts in Redis: %w", err)
+	}
+
+	return nil
+}
+
+func (s *Service) GetMostSelledProducts() ([]repository.Product, int, error) {
+	products, err := s.getTopTenFromRedis()
+
+	if err != nil && len(products) < 10 {
+		products, err := s.db.GetTop10MostSoldProducts(context.Background())
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+		return products, http.StatusOK, nil
+	}
+	return products, http.StatusOK, nil
 }

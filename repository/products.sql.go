@@ -94,6 +94,48 @@ func (q *Queries) GetAllProductsPagination(ctx context.Context, arg GetAllProduc
 	return items, nil
 }
 
+const getTop10MostSoldProducts = `-- name: GetTop10MostSoldProducts :many
+SELECT 
+    p.id, p.name, p.description, p.price
+FROM 
+    order_items AS oi
+JOIN 
+    products AS p ON oi.product_id = p.id
+GROUP BY 
+    p.id
+ORDER BY 
+    SUM(oi.quantity) DESC
+LIMIT 10
+`
+
+func (q *Queries) GetTop10MostSoldProducts(ctx context.Context) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, getTop10MostSoldProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const insertProduct = `-- name: InsertProduct :one
 INSERT INTO products (name, description, price ) 
 VALUES ($1, $2, $3)

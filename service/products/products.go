@@ -29,6 +29,20 @@ func NewHandler(Service types.ProductService, store repository.Queries) *Handler
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/register", auth.WithJWTAuth(h.CreateProduct, h.store, "admin")).Methods(http.MethodPost)
 	router.HandleFunc("/get-all-products", h.GetAllProducts).Methods(http.MethodGet)
+	router.HandleFunc("/get-most-selled-products", h.GetMostSelledProducts).Methods(http.MethodGet)
+}
+
+func (h *Handler) GetMostSelledProducts(w http.ResponseWriter, r *http.Request) {
+	logger.Info(r.URL.Path, "Get Most selled product")
+
+	products, status, err := h.Service.GetMostSelledProducts()
+	if err != nil {
+		logger.LogError(r.URL.Path, err)
+		utils.WriteError(w, status, err)
+		return
+	}
+
+	utils.WriteJSON(w, status, products)
 }
 
 func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {

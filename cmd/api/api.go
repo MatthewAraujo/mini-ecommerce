@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/MatthewAraujo/min-ecommerce/repository"
-	"github.com/MatthewAraujo/min-ecommerce/service/auth/order"
 	"github.com/MatthewAraujo/min-ecommerce/service/customers"
+	"github.com/MatthewAraujo/min-ecommerce/service/order"
 	"github.com/MatthewAraujo/min-ecommerce/service/products"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
@@ -37,7 +37,7 @@ func (s *APIServer) Run() error {
 	customersHandler := customers.NewHandler(costumersService)
 	customersHandler.RegisterRoutes(subrouter.PathPrefix("/customers").Subrouter())
 
-	productService := products.NewService(s.db, s.dbTx)
+	productService := products.NewService(s.db, s.dbTx, s.redis)
 	productHandler := products.NewHandler(productService, *s.db)
 	productHandler.RegisterRoutes(subrouter.PathPrefix("/product").Subrouter())
 

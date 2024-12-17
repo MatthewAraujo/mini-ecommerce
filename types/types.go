@@ -29,6 +29,7 @@ type LoginCustomerPayload struct {
 type ProductService interface {
 	CreateProduct(p *CreateProductPayload) (int, error)
 	GetAllProducts(p *GetAllProductsPayload) (GetAllProductsResponse, int, error)
+	GetMostSelledProducts() ([]repository.Product, int, error)
 }
 
 type CreateProductPayload struct {

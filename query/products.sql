@@ -19,3 +19,17 @@ SELECT * FROM products LIMIT $1 OFFSET $2;
 -- name: CountProducts :one
 SELECT COUNT(*) AS TOTAL
 FROM products;
+
+-- name: GetTop10MostSoldProducts :many
+SELECT 
+    p.*
+FROM 
+    order_items AS oi
+JOIN 
+    products AS p ON oi.product_id = p.id
+GROUP BY 
+    p.id
+ORDER BY 
+    SUM(oi.quantity) DESC
+LIMIT 10;
+
