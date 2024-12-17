@@ -54,7 +54,7 @@
 
 - **Implementação de Cache**:
 
-  - [ ] Implementar caching para products mais vendidos.
+  - [x] Implementar caching para products mais vendidos.
   - [ ] Implementar cache para detalhes de orders e customers para melhorar a performance.
 
 - **Configuração do Redis**:
