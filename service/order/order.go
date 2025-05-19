@@ -14,15 +14,13 @@ var logger = utils.NewParentLogger("Rota api/v1/order")
 
 type Handler struct {
 	Service types.OrderService
-
-	store repository.Queries
+	store   repository.Queries
 }
 
 func NewHandler(Service types.OrderService, store repository.Queries) *Handler {
 	return &Handler{
 		Service: Service,
-
-		store: store,
+		store:   store,
 	}
 }
 
